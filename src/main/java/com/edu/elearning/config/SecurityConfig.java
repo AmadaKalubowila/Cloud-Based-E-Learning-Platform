@@ -29,32 +29,30 @@ public class SecurityConfig {
 
                         // Public — no token needed
                         .requestMatchers(
-                                "/user/create"
+                                "/user/create",
+                                "/user/login",
+                                "/user/resetPassword/**",
+                                "/user/password"
 
                         ).permitAll()
 
                         // Authenticated users
                         .requestMatchers(
                                 "/user/logout",
+                                "/user/update",
                                 "/user/refresh"
                         ).authenticated()
 
                         //ADMIN only
                         .requestMatchers(
-                                "/user/delete/**"
+                                "/user/delete/**",
+                                "/user/unlock-user/**",
+                                "/user/getAll"
                         ).hasRole("ADMIN")
 
                         // SUPER_ADMIN only
                         .requestMatchers(
-                                "/admin/session/create",
-                                "/admin/session/update",
-                                "/admin/session/delete",
-                                "/admin/session/bulk-create",
-                                "/admin/session-mappings/**",
-                                "/admin/pricing/**",
-                                "/admin/closures/**",
-                                "/admin/stats/**",
-                                "/admin/bookings/**"
+                                "/admin/session/create"
                         ).hasRole("SUPER_ADMIN")
 
                         // ADMIN — read-only on sessions
