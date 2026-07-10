@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -78,6 +79,12 @@ public class UserController {
     public String deleteUser(@RequestParam String username, @RequestHeader("Authorization") String token) {
         return userService.deleteUser(username);
     }
+
+    @GetMapping("/getById")
+    public UserResponse deleteUser(@RequestParam Long id) {
+        return userService.fetchUserById(id);
+    }
+
 
     @GetMapping(value = "/getAll")
     public Page<UserAuditResponse> getAll(

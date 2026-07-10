@@ -436,6 +436,13 @@ public class UserManagementServiceImpl implements UserManagementService {
         return userAccounts.map(user -> buildUserResponse(user, user.getUserDetails()));
     }
 
+    public UserResponse fetchUserById(Long id){
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ElearningException("User not found"));
+
+        return buildUserResponse(user, user.getUserDetails());
+    }
+
     private UserAuditResponse convertToDTO(AuditUserLog auditUserLog) {
         return UserAuditResponse.builder()
                 .id(auditUserLog.getId())
