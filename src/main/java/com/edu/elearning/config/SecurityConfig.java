@@ -33,13 +33,13 @@ public class SecurityConfig {
                                 "/user/login",
                                 "/user/resetPassword/**",
                                 "/user/password",
-                                "/user/getById",
+                                "/user/getById/**",
                                 "/module/getAll",
-                                "/module/getById",
+                                "/module/getById/**",
                                 "/video/getAll",
-                                "/video/getById",
+                                "/video/getById/**",
                                 "/course/getAll",
-                                "/course/getById"
+                                "/course/getById/**"
 
                         ).permitAll()
 
@@ -47,7 +47,10 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/user/logout",
                                 "/user/update",
-                                "/user/refresh"
+                                "/user/refresh",
+                                "/courseAssignments/getAssignmentById/**",
+                                "/courseAssignments/getAll",
+                                "/courseEnrollments/getEnrollmentById/**"
                         ).authenticated()
 
                         //ADMIN only
@@ -58,7 +61,12 @@ public class SecurityConfig {
                                 "/module/create",
                                 "/module/update",
                                 "/course/create",
-                                "/course/update"
+                                "/course/update",
+                                "/courseAssignments/assign",
+                                "/courseAssignments/remove/**",
+                                "/courseEnrollments/enrollStudent",
+                                "/courseEnrollments/getAll",
+                                "/courseEnrollments/remove/**"
                         ).hasRole("ADMIN")
 
                         // SUPER_ADMIN only

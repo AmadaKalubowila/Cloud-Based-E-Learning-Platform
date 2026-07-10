@@ -47,4 +47,10 @@ public class Courses extends BaseEntity{
             inverseJoinColumns = @JoinColumn(name = "module_id")
     )
     private List<Modules> modules = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "course",
+            cascade = CascadeType.ALL
+    )
+    private List<CourseEnrollment> enrollments = new ArrayList<>();
 }
