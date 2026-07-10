@@ -12,7 +12,8 @@ import java.util.Date;
 
 public class JwtUtil {
 
-    private static final String SECRET = "my-super-secret-key-my-super-secret-key";
+    private static final String SECRET = System.getenv().getOrDefault(
+            "JWT_SECRET", "dev-only-secret-do-not-use-in-production-change-me");
     private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
     private static final long ACCESS_TOKEN_EXPIRY = 1000 * 60 * 20;

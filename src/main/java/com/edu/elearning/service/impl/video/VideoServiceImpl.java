@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -23,8 +24,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class VideoServiceImpl implements VideoService {
 
+    private static final String S3_KEY_PREFIX = "videos/";
     private final VideoRepository videoRepository;
     private final ModulesRepository modulesRepository;
+    private final S3StorageService s3StorageService;
 
 
     @Override
@@ -46,6 +49,50 @@ public class VideoServiceImpl implements VideoService {
         Video savedVideo = videoRepository.save(video);
 
         return convertToDTO(savedVideo);
+    }
+
+
+
+    @Override
+    public VideoResponse uploadVideo(
+            MultipartFile file,
+            String title,
+            String description,
+            Integer durationMinutes,
+            Integer displayOrder,
+            Long moduleId) {
+
+        Modules module = modulesRepository.findById(moduleId)
+                .orElseThrow(() -> new ElearningException("Module not found"));
+
+        String s3Key = s3StorageService.uploadVideo(file, moduleId);
+
+        Video video = Video.builder()
+                .title(title)
+                .description(description)
+                .videoUrl(s3Key)
+                .durationMinutes(durationMinutes)
+                .displayOrder(displayOrder)
+                .status(Status.ACTIVE)
+                .module(module)
+                .build();
+
+        Video savedVideo = videoRepository.save(video);
+
+        return convertToDTO(savedVideo);
+    }
+
+    @Override
+    public void deleteVideo(Long id) {
+
+        Video video = videoRepository.findById(id)
+                .orElseThrow(() -> new ElearningException("Video not found"));
+
+        if (video.getVideoUrl() != null && video.getVideoUrl().startsWith(S3_KEY_PREFIX)) {
+            s3StorageService.deleteVideo(video.getVideoUrl());
+        }
+
+        videoRepository.delete(video);
     }
 
 
@@ -100,15 +147,6 @@ public class VideoServiceImpl implements VideoService {
     }
 
 
-    @Override
-    public void deleteVideo(Long id) {
-
-        Video video = videoRepository.findById(id)
-                .orElseThrow(() -> new ElearningException("Video not found"));
-
-        videoRepository.delete(video);
-    }
-
 
     @Override
     public VideoResponse getVideoById(Long id) {
@@ -143,14 +181,18 @@ public class VideoServiceImpl implements VideoService {
         return videos.map(this::convertToDTO);
     }
 
-
     private VideoResponse convertToDTO(Video video) {
+
+        String playbackUrl = video.getVideoUrl();
+        if (playbackUrl != null && playbackUrl.startsWith(S3_KEY_PREFIX)) {
+            playbackUrl = s3StorageService.generatePlaybackUrl(video.getVideoUrl());
+        }
 
         return VideoResponse.builder()
                 .id(video.getId())
                 .title(video.getTitle())
                 .description(video.getDescription())
-                .videoUrl(video.getVideoUrl())
+                .videoUrl(playbackUrl)
                 .durationMinutes(video.getDurationMinutes())
                 .displayOrder(video.getDisplayOrder())
                 .status(video.getStatus().name())

@@ -4,6 +4,7 @@ import com.edu.elearning.dto.video.request.VideoCreate;
 import com.edu.elearning.dto.video.request.VideoUpdate;
 import com.edu.elearning.dto.video.response.VideoResponse;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -11,8 +12,6 @@ public interface VideoService {
     VideoResponse createVideo(VideoCreate videoCreate);
 
     VideoResponse updateVideo(VideoUpdate videoUpdate);
-
-    void deleteVideo(Long id);
 
     VideoResponse getVideoById(Long id);
 
@@ -22,4 +21,13 @@ public interface VideoService {
             int size,
             String sortField,
             String sortDirection);
+
+    VideoResponse uploadVideo(
+            MultipartFile file,
+            String title,
+            String description,
+            Integer durationMinutes,
+            Integer displayOrder,
+            Long moduleId);
+    void deleteVideo(Long id);
 }

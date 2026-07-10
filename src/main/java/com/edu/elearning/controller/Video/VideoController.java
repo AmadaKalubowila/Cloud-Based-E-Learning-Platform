@@ -6,7 +6,9 @@ import com.edu.elearning.dto.video.response.VideoResponse;
 import com.edu.elearning.service.video.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -22,6 +24,19 @@ public class VideoController {
             @RequestBody VideoCreate videoCreate) {
 
         return videoService.createVideo(videoCreate);
+    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public VideoResponse uploadVideo(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("title") String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "durationMinutes", required = false) Integer durationMinutes,
+            @RequestParam(value = "displayOrder", required = false) Integer displayOrder,
+            @RequestParam("moduleId") Long moduleId) {
+
+        return videoService.uploadVideo(
+                file, title, description, durationMinutes, displayOrder, moduleId);
     }
 
     @PutMapping("/update")
