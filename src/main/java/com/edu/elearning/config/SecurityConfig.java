@@ -71,7 +71,7 @@ public class SecurityConfig {
 
                         // SUPER_ADMIN only
                         .requestMatchers(
-                                "/videos/create/",
+                                "/videos/create",
                                 "/videos/update",
                                 "/videos/delete/**",
                                 "/videos/upload"

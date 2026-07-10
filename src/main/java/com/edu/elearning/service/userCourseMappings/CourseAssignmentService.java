@@ -27,5 +27,5 @@ public interface CourseAssignmentService {
     );
 
 
-    void removeAssignment(Long id);
+    CourseAssignmentResponse removeAssignment(Long id);
 }

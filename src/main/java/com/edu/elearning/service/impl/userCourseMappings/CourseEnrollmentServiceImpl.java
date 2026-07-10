@@ -37,7 +37,6 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
     private final CourseRepository courseRepository;
 
 
-
     @Override
     public EnrollmentResponse enrollStudent(
             EnrollmentCreate enrollmentCreate) {
@@ -50,7 +49,7 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
         );
 
 
-        if(user.getRole() != Role.STUDENT){
+        if (user.getRole() != Role.STUDENT) {
             throw new ElearningException(
                     "Only students can enroll courses"
             );
@@ -82,7 +81,6 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
     }
 
 
-
     @Override
     public EnrollmentResponse getEnrollmentById(Long id) {
 
@@ -98,7 +96,6 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
 
         return convertToDTO(enrollment);
     }
-
 
 
     @Override
@@ -133,9 +130,8 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
     }
 
 
-
     @Override
-    public void removeEnrollment(Long id) {
+    public EnrollmentResponse removeEnrollment(Long id) {
 
 
         CourseEnrollment enrollment =
@@ -146,10 +142,10 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
                                 )
                         );
 
-
-        enrollmentRepository.delete(enrollment);
+        enrollment.setStatus(Status.INACTIVE);
+        enrollmentRepository.save(enrollment);
+        return  convertToDTO(enrollment);
     }
-
 
 
     private EnrollmentResponse convertToDTO(

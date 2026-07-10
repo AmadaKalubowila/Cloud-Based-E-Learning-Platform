@@ -102,7 +102,7 @@ public class CourseServiceImpl implements CourseService {
 
         if(courseUpdate.getCourseStatus()!=null){
             course.setCourseStatus(
-                    CourseStatus.valueOf(courseUpdate.getStatus())
+                    CourseStatus.valueOf(courseUpdate.getCourseStatus())
             );
         }
 

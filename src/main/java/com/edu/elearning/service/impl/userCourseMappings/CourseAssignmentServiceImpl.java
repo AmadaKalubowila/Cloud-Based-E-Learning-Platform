@@ -6,6 +6,7 @@ import com.edu.elearning.entity.CourseAssignment;
 import com.edu.elearning.entity.Courses;
 import com.edu.elearning.entity.User;
 import com.edu.elearning.enums.Role;
+import com.edu.elearning.enums.Status;
 import com.edu.elearning.exception.ElearningException;
 import com.edu.elearning.repository.CourseAssignmentRepository;
 import com.edu.elearning.repository.CourseRepository;
@@ -35,7 +36,6 @@ public class CourseAssignmentServiceImpl
     private final CourseRepository courseRepository;
 
 
-
     @Override
     public CourseAssignmentResponse assignLecturer(
             CourseAssignmentCreate assignmentCreate) {
@@ -50,13 +50,12 @@ public class CourseAssignmentServiceImpl
         );
 
 
-        if(lecturer.getRole() != Role.LECTURER){
+        if (lecturer.getRole() != Role.LECTURER) {
 
             throw new ElearningException(
                     "Only lecturers can be assigned courses"
             );
         }
-
 
 
         Courses course = courseRepository.findById(
@@ -68,7 +67,6 @@ public class CourseAssignmentServiceImpl
         );
 
 
-
         CourseAssignment assignment =
                 CourseAssignment.builder()
                         .user(lecturer.getUserDetails())
@@ -77,15 +75,12 @@ public class CourseAssignmentServiceImpl
                         .build();
 
 
-
         CourseAssignment saved =
                 assignmentRepository.save(assignment);
 
 
-
         return convertToDTO(saved);
     }
-
 
 
     @Override
@@ -105,10 +100,9 @@ public class CourseAssignmentServiceImpl
     }
 
 
-
     @Override
     public Page<CourseAssignmentResponse> getAllAssignments(
-            Map<String,String> filters,
+            Map<String, String> filters,
             int page,
             int size,
             String sortField,
@@ -120,7 +114,6 @@ public class CourseAssignmentServiceImpl
                         filters,
                         CourseAssignment.class
                 );
-
 
 
         Page<CourseAssignment> assignments =
@@ -139,9 +132,8 @@ public class CourseAssignmentServiceImpl
     }
 
 
-
     @Override
-    public void removeAssignment(Long id) {
+    public CourseAssignmentResponse removeAssignment(Long id) {
 
 
         CourseAssignment assignment =
@@ -152,15 +144,13 @@ public class CourseAssignmentServiceImpl
                                 )
                         );
 
-
-        assignmentRepository.delete(assignment);
+        assignment.setStatus(Status.INACTIVE);
+        return convertToDTO(assignmentRepository.save(assignment));
     }
 
 
-
-
     private CourseAssignmentResponse convertToDTO(
-            CourseAssignment assignment){
+            CourseAssignment assignment) {
 
 
         return CourseAssignmentResponse.builder()

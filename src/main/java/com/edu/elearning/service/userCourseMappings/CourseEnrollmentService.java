@@ -26,6 +26,6 @@ public interface CourseEnrollmentService {
     );
 
 
-    void removeEnrollment(Long id);
+    EnrollmentResponse removeEnrollment(Long id);
 
 }
