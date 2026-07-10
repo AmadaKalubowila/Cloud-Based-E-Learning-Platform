@@ -38,4 +38,6 @@ public interface UserManagementService {
 
     Page<UserResponse> getAllUsers(
             Map<String, String> filters, int page, int size, String sortField, String sortDirection);
+
+    UserResponse fetchUserById(Long id);
 }

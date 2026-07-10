@@ -32,7 +32,14 @@ public class SecurityConfig {
                                 "/user/create",
                                 "/user/login",
                                 "/user/resetPassword/**",
-                                "/user/password"
+                                "/user/password",
+                                "/user/getById",
+                                "/module/getAll",
+                                "/module/getById",
+                                "/video/getAll",
+                                "/video/getById",
+                                "/course/getAll",
+                                "/course/getById"
 
                         ).permitAll()
 
@@ -47,13 +54,18 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/user/delete/**",
                                 "/user/unlock-user/**",
-                                "/user/getAll"
+                                "/user/getAll",
+                                "/module/create",
+                                "/module/update",
+                                "/course/create",
+                                "/course/update"
                         ).hasRole("ADMIN")
 
                         // SUPER_ADMIN only
                         .requestMatchers(
-                                "/admin/session/create"
-                        ).hasRole("SUPER_ADMIN")
+                                "/video/create/",
+                                "/video/update"
+                        ).hasRole("LECTURER")
 
                         // ADMIN — read-only on sessions
                         .requestMatchers("/admin/session/getAll").hasAnyRole("ADMIN", "SUPER_ADMIN")
