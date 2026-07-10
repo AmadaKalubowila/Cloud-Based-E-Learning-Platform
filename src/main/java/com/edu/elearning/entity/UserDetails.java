@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @EqualsAndHashCode(callSuper = true)
@@ -48,5 +50,8 @@ public class UserDetails extends BaseEntity {
 
     @Column(name = "registered_date")
     private LocalDateTime registeredDate;
+
+    @OneToMany(mappedBy = "user")
+    private List<CourseEnrollment> enrollments = new ArrayList<>();
 }
 

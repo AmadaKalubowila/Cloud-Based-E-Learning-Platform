@@ -20,7 +20,7 @@ public class CourseController {
     private final CourseService courseService;
 
     @PostMapping("/create")
-    public CourseResponse createCourse(
+    public CourseResponse createCourse(@RequestHeader("Authorization") String token,
             @RequestBody CourseCreate courseCreate) {
 
         return courseService.createCourse(courseCreate);
@@ -28,7 +28,7 @@ public class CourseController {
 
 
     @PutMapping("/update")
-    public CourseResponse updateCourse(
+    public CourseResponse updateCourse(@RequestHeader("Authorization") String token,
             @RequestBody CourseUpdate courseUpdate) {
 
         return courseService.updateCourse(courseUpdate);
@@ -36,7 +36,7 @@ public class CourseController {
 
 
     @GetMapping("/getById/{id}")
-    public CourseResponse getCourseById(
+    public CourseResponse getCourseById(@RequestHeader("Authorization") String token,
             @PathVariable Long id) {
 
         return courseService.getCourseById(id);
@@ -44,7 +44,7 @@ public class CourseController {
 
 
     @DeleteMapping("/delete/{id}")
-    public String deleteCourse(
+    public String deleteCourse(@RequestHeader("Authorization") String token,
             @PathVariable Long id) {
 
         courseService.deleteCourse(id);
@@ -55,6 +55,7 @@ public class CourseController {
 
     @GetMapping("/getAll")
     public Page<CourseResponse> getAllCourses(
+            @RequestHeader("Authorization") String token,
             @RequestParam Map<String, String> filters,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

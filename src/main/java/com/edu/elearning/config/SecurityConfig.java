@@ -33,13 +33,13 @@ public class SecurityConfig {
                                 "/user/login",
                                 "/user/resetPassword/**",
                                 "/user/password",
-                                "/user/getById",
-                                "/module/getAll",
-                                "/module/getById",
-                                "/video/getAll",
-                                "/video/getById",
-                                "/course/getAll",
-                                "/course/getById"
+                                "/user/getById/**",
+                                "/modules/getAll",
+                                "/modules/getById/**",
+                                "/videos/getAll",
+                                "/videos/getById/**",
+                                "/courses/getAll",
+                                "/courses/getById/**"
 
                         ).permitAll()
 
@@ -47,7 +47,10 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/user/logout",
                                 "/user/update",
-                                "/user/refresh"
+                                "/user/refresh",
+                                "/courseAssignments/getAssignmentById/**",
+                                "/courseAssignments/getAll",
+                                "/courseEnrollments/getEnrollmentById/**"
                         ).authenticated()
 
                         //ADMIN only
@@ -55,16 +58,23 @@ public class SecurityConfig {
                                 "/user/delete/**",
                                 "/user/unlock-user/**",
                                 "/user/getAll",
-                                "/module/create",
-                                "/module/update",
-                                "/course/create",
-                                "/course/update"
+                                "/modules/create",
+                                "/modules/update",
+                                "/courses/create",
+                                "/courses/update",
+                                "/courseAssignments/assign",
+                                "/courseAssignments/remove/**",
+                                "/courseEnrollments/enrollStudent",
+                                "/courseEnrollments/getAll",
+                                "/courseEnrollments/remove/**"
                         ).hasRole("ADMIN")
 
                         // SUPER_ADMIN only
                         .requestMatchers(
-                                "/video/create/",
-                                "/video/update"
+                                "/videos/create",
+                                "/videos/update",
+                                "/videos/delete/**",
+                                "/videos/upload"
                         ).hasRole("LECTURER")
 
                         // ADMIN — read-only on sessions
