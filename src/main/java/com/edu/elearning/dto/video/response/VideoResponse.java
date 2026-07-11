@@ -1,9 +1,12 @@
 package com.edu.elearning.dto.video.response;
 
+import com.edu.elearning.dto.userCourseMappings.response.CourseMappingsUser;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -28,4 +31,6 @@ public class VideoResponse {
     private Long moduleId;
 
     private String moduleName;
+
+    private List<CourseMappingsUser> enrolledUsers;
 }

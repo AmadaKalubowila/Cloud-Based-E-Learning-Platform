@@ -50,7 +50,7 @@ public class S3StorageService {
         }
 
         String originalName = sanitizeFileName(file.getOriginalFilename());
-        String key = "videos/" + moduleId + "/" + UUID.randomUUID() + "-" + originalName;
+        String key =  UUID.randomUUID() + "-" + originalName;
 
         try {
             s3Client.putObject(

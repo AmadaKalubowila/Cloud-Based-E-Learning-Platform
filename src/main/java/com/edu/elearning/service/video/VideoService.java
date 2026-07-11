@@ -1,5 +1,6 @@
 package com.edu.elearning.service.video;
 
+import com.edu.elearning.dto.userCourseMappings.response.ListOfMappedUsers;
 import com.edu.elearning.dto.video.request.VideoCreate;
 import com.edu.elearning.dto.video.request.VideoUpdate;
 import com.edu.elearning.dto.video.response.VideoResponse;
@@ -30,4 +31,6 @@ public interface VideoService {
             Integer displayOrder,
             Long moduleId);
     void deleteVideo(Long id);
+
+    ListOfMappedUsers getCourseUsers(Long videoId);
 }
