@@ -3,6 +3,7 @@ package com.edu.elearning.service.impl.courseManagement;
 import com.edu.elearning.dto.courseManagement.request.CourseCreate;
 import com.edu.elearning.dto.courseManagement.request.CourseUpdate;
 import com.edu.elearning.dto.courseManagement.response.CourseResponse;
+import com.edu.elearning.dto.userCourseMappings.response.ListOfMappedUsers;
 import com.edu.elearning.entity.Courses;
 import com.edu.elearning.entity.Modules;
 import com.edu.elearning.enums.CourseStatus;
@@ -221,4 +222,5 @@ public class CourseServiceImpl implements CourseService {
                 .moduleIds(moduleIds)
                 .build();
     }
+
 }

@@ -39,7 +39,8 @@ public class SecurityConfig {
                                 "/videos/getAll",
                                 "/videos/getById/**",
                                 "/courses/getAll",
-                                "/courses/getById/**"
+                                "/courses/getById/**",
+                                "/videos/getAllByUsers/**"
 
                         ).permitAll()
 

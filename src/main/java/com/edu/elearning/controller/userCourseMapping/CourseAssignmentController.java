@@ -23,14 +23,12 @@ public class CourseAssignmentController {
         return assignmentService.assignLecturer(request);
     }
 
-
     @GetMapping("/getAssignmentById/{id}")
     public CourseAssignmentResponse getAssignmentById(@RequestHeader("Authorization") String token,
             @PathVariable Long id) {
 
         return assignmentService.getAssignmentById(id);
     }
-
 
     @GetMapping("/getAll")
     public Page<CourseAssignmentResponse> getAllAssignments(@RequestHeader("Authorization") String token,

@@ -24,12 +24,6 @@ public class S3Config {
     @Value("${aws.secret-access-key:}")
     private String secretAccessKey;
 
-    /**
-     * If AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY env vars are set, use them.
-     * Otherwise fall back to the default provider chain (e.g. an IAM role attached
-     * to the EC2/ECS instance in production) — this is the preferred approach in
-     * cloud deployments so keys never need to live in config at all.
-     */
     private AwsCredentialsProvider credentialsProvider() {
         if (accessKeyId != null && !accessKeyId.isBlank()
                 && secretAccessKey != null && !secretAccessKey.isBlank()) {

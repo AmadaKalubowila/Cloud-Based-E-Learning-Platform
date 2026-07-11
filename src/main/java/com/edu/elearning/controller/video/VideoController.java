@@ -1,5 +1,6 @@
 package com.edu.elearning.controller.video;
 
+import com.edu.elearning.dto.userCourseMappings.response.ListOfMappedUsers;
 import com.edu.elearning.dto.video.request.VideoCreate;
 import com.edu.elearning.dto.video.request.VideoUpdate;
 import com.edu.elearning.dto.video.response.VideoResponse;
@@ -61,6 +62,12 @@ public class VideoController {
             @PathVariable Long id) {
 
         return videoService.getVideoById(id);
+    }
+
+    @GetMapping("/getAllByUsers/{id}")
+    public ListOfMappedUsers getAllByUsers(
+                                           @PathVariable Long id) {
+        return videoService.getCourseUsers(id);
     }
 
     @GetMapping("/getAll")
