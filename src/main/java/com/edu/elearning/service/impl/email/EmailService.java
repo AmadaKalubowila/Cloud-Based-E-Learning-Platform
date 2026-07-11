@@ -1,6 +1,5 @@
 package com.edu.elearning.service.impl.email;
 
-
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,7 +14,6 @@ import java.time.format.DateTimeFormatter;
 public class EmailService {
 
     private final JavaMailSender mailSender;
-
 
     private static final DateTimeFormatter DISPLAY_FMT =
             DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a");
@@ -33,6 +31,9 @@ public class EmailService {
         }
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // PASSWORD RESET
+    // ─────────────────────────────────────────────────────────────
     public String buildResetEmail(String resetLink) {
         return """
         <div style="font-family:Arial,sans-serif;background:#f4f6f8;padding:30px;">
@@ -51,20 +52,78 @@ public class EmailService {
             <p style="font-size:12px;color:#aaa;">If you did not request this, ignore this email.</p>
           </div>
         </div>
-    """.formatted(resetLink);
+        """.formatted(resetLink);
     }
 
     // ─────────────────────────────────────────────────────────────
-    // BOOKING CONFIRMED  (sent to customer)
+    // WELCOME EMAIL (sent on user registration)
+    // ─────────────────────────────────────────────────────────────
+    public String buildWelcomeEmail(String fullName) {
+        return """
+        <div style="font-family:Arial,sans-serif;background:#f4f6f8;padding:30px;">
+          <div style="max-width:600px;margin:auto;background:white;padding:20px;border-radius:10px;">
+            <h2 style="color:#333;">Welcome, %s! 🎉</h2>
+            <p>Thank you for registering on our e-learning platform.</p>
+            <p>Your account has been successfully created and you can now log in
+               and start exploring courses right away.</p>
+            <div style="text-align:center;margin:30px 0;">
+              <a href="#" style="background:#4CAF50;color:white;padding:12px 25px;
+                 text-decoration:none;border-radius:5px;display:inline-block;font-weight:bold;">
+                Go to Dashboard
+              </a>
+            </div>
+            <hr>
+            <p style="font-size:12px;color:#aaa;">
+              If you did not create this account, please contact our support team immediately.
+            </p>
+          </div>
+        </div>
+        """.formatted(fullName);
+    }
+    // ─────────────────────────────────────────────────────────────
+// COURSE ENROLLMENT CONFIRMED
+// ─────────────────────────────────────────────────────────────
+    public String buildEnrollmentEmail(String fullName, String courseName, LocalDateTime enrolledDate) {
+        return """
+        <div style="font-family:Arial,sans-serif;background:#f4f6f8;padding:30px;">
+          <div style="max-width:600px;margin:auto;background:white;padding:20px;border-radius:10px;">
+            <div style="text-align:center;margin-bottom:20px;">
+              <h1 style="color:#2e7d32;margin:0;">✅ Enrollment Confirmed</h1>
+            </div>
+            <p>Hello <strong>%s</strong>,</p>
+            <p>You have successfully enrolled in:</p>
+            <div style="background:#f0f4f8;border-left:4px solid #1a237e;padding:14px 18px;
+                        border-radius:4px;margin:16px 0;">
+              <strong style="font-size:16px;">%s</strong><br>
+              <span style="color:#777;font-size:13px;">Enrolled on: %s</span>
+            </div>
+            <p>Your progress starts at 0%%. Log in anytime to pick up where you left off.</p>
+            <div style="text-align:center;margin:30px 0;">
+              <a href="#" style="background:#4CAF50;color:white;padding:12px 25px;
+                 text-decoration:none;border-radius:5px;display:inline-block;font-weight:bold;">
+                Start Learning
+              </a>
+            </div>
+            <hr>
+            <p style="font-size:12px;color:#aaa;">
+              If you did not enroll in this course, please contact our support team.
+            </p>
+          </div>
+        </div>
+        """.formatted(fullName, courseName, enrolledDate.format(DISPLAY_FMT));
+    }
+    // ─────────────────────────────────────────────────────────────
+    // BOOKING CONFIRMED (sent to customer)
     // ─────────────────────────────────────────────────────────────
     public String buildBookingConfirmedEmail(
-            String fullName, String orderId,
-            String sessionRows,          // pre-built HTML <tr> rows
+            String fullName,
+            String orderId,
+            String sessionRows,
             double totalAmount,
             String paymentMethod,
             String paymentStatus,
-            LocalDateTime expiresAt,
-            String checkoutUrl) {
+            String checkoutUrl,
+            LocalDateTime expiresAt) {
 
         String paymentBlock = switch (paymentMethod) {
             case "CASH" -> """
@@ -103,8 +162,8 @@ public class EmailService {
               <div style="max-width:640px;margin:auto;background:white;padding:28px;border-radius:10px;">
 
                 <div style="text-align:center;margin-bottom:24px;">
-                  <h1 style="color:#2e7d32;margin:0;">✅ Booking Confirmed</h1>
-                  <p style="color:#555;margin-top:6px;">Thank you for your booking, <strong>%s</strong>!</p>
+                  <h1 style="color:#2e7d32;margin:0;">✅ Registration Confirmed</h1>
+                  <p style="color:#555;margin-top:6px;">Welcome to Onboard <strong>%s</strong>!</p>
                 </div>
 
                 <table style="width:100%%;border-collapse:collapse;font-size:14px;">
@@ -143,208 +202,8 @@ public class EmailService {
                 <p style="font-size:12px;color:#aaa;text-align:center;">
                   If you did not make this booking, please contact us immediately.
                 </p>
-                %s
               </div>
             </div>
         """.formatted(fullName, orderId, sessionRows, totalAmount, paymentBlock);
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // PAYMENT CONFIRMED  (sent to customer)
-    // ─────────────────────────────────────────────────────────────
-    public String buildPaymentConfirmedEmail(
-            String fullName, String orderId,
-            double amount, String paymentMethod, LocalDateTime paidAt) {
-
-        return """
-            <div style="font-family:Arial,sans-serif;background:#f4f6f8;padding:30px;">
-              <div style="max-width:600px;margin:auto;background:white;padding:28px;border-radius:10px;">
-
-                <div style="text-align:center;margin-bottom:20px;">
-                  <h1 style="color:#2e7d32;">💳 Payment Received</h1>
-                  <p style="color:#555;">Hi <strong>%s</strong>, your payment has been confirmed!</p>
-                </div>
-
-                <table style="width:100%%;border-collapse:collapse;font-size:14px;">
-                  <tr style="background:#f0f4f8;">
-                    <td style="padding:10px;font-weight:bold;border:1px solid #e0e0e0;">Order ID</td>
-                    <td style="padding:10px;border:1px solid #e0e0e0;font-family:monospace;">%s</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:10px;font-weight:bold;border:1px solid #e0e0e0;">Amount Paid</td>
-                    <td style="padding:10px;border:1px solid #e0e0e0;color:#2e7d32;font-weight:bold;">
-                      LKR %.2f
-                    </td>
-                  </tr>
-                  <tr style="background:#f0f4f8;">
-                    <td style="padding:10px;font-weight:bold;border:1px solid #e0e0e0;">Payment Method</td>
-                    <td style="padding:10px;border:1px solid #e0e0e0;">%s</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:10px;font-weight:bold;border:1px solid #e0e0e0;">Payment Time</td>
-                    <td style="padding:10px;border:1px solid #e0e0e0;">%s</td>
-                  </tr>
-                </table>
-
-                <p style="margin-top:20px;color:#555;">
-                  Your booking is now fully confirmed. See you at the session! 🎉
-                </p>
-
-                <hr style="border:none;border-top:1px solid #e0e0e0;margin-top:24px;">
-                <p style="font-size:12px;color:#aaa;text-align:center;">
-                  This is an automated receipt. Please keep it for your records.
-                </p>
-                %s
-              </div>
-            </div>
-        """.formatted(fullName, orderId, amount, paymentMethod,
-                paidAt != null ? paidAt.format(DISPLAY_FMT) : "—");
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // PAYMENT FAILED  (sent to customer)
-    // ─────────────────────────────────────────────────────────────
-    public String buildPaymentFailedEmail(String fullName, String orderId, double amount) {
-        return """
-            <div style="font-family:Arial,sans-serif;background:#f4f6f8;padding:30px;">
-              <div style="max-width:600px;margin:auto;background:white;padding:28px;border-radius:10px;">
-
-                <div style="text-align:center;margin-bottom:20px;">
-                  <h1 style="color:#c62828;">❌ Payment Failed</h1>
-                  <p style="color:#555;">Hi <strong>%s</strong>, unfortunately your payment could not be processed.</p>
-                </div>
-
-                <table style="width:100%%;border-collapse:collapse;font-size:14px;">
-                  <tr style="background:#f0f4f8;">
-                    <td style="padding:10px;font-weight:bold;border:1px solid #e0e0e0;">Order ID</td>
-                    <td style="padding:10px;border:1px solid #e0e0e0;font-family:monospace;">%s</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:10px;font-weight:bold;border:1px solid #e0e0e0;">Amount</td>
-                    <td style="padding:10px;border:1px solid #e0e0e0;">LKR %.2f</td>
-                  </tr>
-                </table>
-
-                <div style="background:#ffebee;border-left:4px solid #c62828;padding:12px 16px;
-                            border-radius:4px;margin-top:16px;">
-                  Your reserved seats have been released. Please place a new booking to try again.
-                </div>
-
-                <hr style="border:none;border-top:1px solid #e0e0e0;margin-top:24px;">
-                <p style="font-size:12px;color:#aaa;text-align:center;">
-                  If you believe this is an error, please contact our support team.
-                </p>
-                %s
-              </div>
-            </div>
-        """.formatted(fullName, orderId, amount);
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // BOOKING CANCELLED  (sent to customer)
-    // ─────────────────────────────────────────────────────────────
-    public String buildBookingCancelledEmail(
-            String fullName, String orderId, boolean refunded, double amount) {
-
-        String refundBlock = refunded
-                ? """
-                  <div style="background:#e8f5e9;border-left:4px solid #4CAF50;padding:12px 16px;
-                              border-radius:4px;margin-top:16px;">
-                    ✅ A refund of <strong>LKR %.2f</strong> has been initiated and will reflect
-                    in your account within 5–7 business days.
-                  </div>
-                  """.formatted(amount)
-                : """
-                  <div style="background:#fff8e1;border-left:4px solid #FFC107;padding:12px 16px;
-                              border-radius:4px;margin-top:16px;">
-                    No payment was collected, so no refund is applicable.
-                  </div>
-                  """;
-
-        return """
-            <div style="font-family:Arial,sans-serif;background:#f4f6f8;padding:30px;">
-              <div style="max-width:600px;margin:auto;background:white;padding:28px;border-radius:10px;">
-
-                <div style="text-align:center;margin-bottom:20px;">
-                  <h1 style="color:#e65100;">🚫 Booking Cancelled</h1>
-                  <p style="color:#555;">Hi <strong>%s</strong>, your booking has been cancelled.</p>
-                </div>
-
-                <table style="width:100%%;border-collapse:collapse;font-size:14px;">
-                  <tr style="background:#f0f4f8;">
-                    <td style="padding:10px;font-weight:bold;border:1px solid #e0e0e0;">Order ID</td>
-                    <td style="padding:10px;border:1px solid #e0e0e0;font-family:monospace;">%s</td>
-                  </tr>
-                </table>
-
-                %s
-
-                <hr style="border:none;border-top:1px solid #e0e0e0;margin-top:24px;">
-                <p style="font-size:12px;color:#aaa;text-align:center;">
-                  We hope to see you again soon.
-                </p>
-                %s
-              </div>
-            </div>
-        """.formatted(fullName, orderId, refundBlock);
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // SESSION COMPLETED — ADMIN ALERT
-    // ─────────────────────────────────────────────────────────────
-    public String buildSessionCompletedAdminEmail(
-            String sessionName, String sessionId,
-            LocalDateTime startTime, LocalDateTime endTime,
-            int totalBookings, double totalRevenue) {
-
-        return """
-            <div style="font-family:Arial,sans-serif;background:#f4f6f8;padding:30px;">
-              <div style="max-width:600px;margin:auto;background:white;padding:28px;border-radius:10px;">
-
-                <div style="text-align:center;margin-bottom:20px;">
-                  <h1 style="color:#1a237e;">📋 Session Completed</h1>
-                  <p style="color:#555;">The following session has just ended.</p>
-                </div>
-
-                <table style="width:100%%;border-collapse:collapse;font-size:14px;">
-                  <tr style="background:#f0f4f8;">
-                    <td style="padding:10px;font-weight:bold;border:1px solid #e0e0e0;">Session Name</td>
-                    <td style="padding:10px;border:1px solid #e0e0e0;"><strong>%s</strong></td>
-                  </tr>
-                  <tr>
-                    <td style="padding:10px;font-weight:bold;border:1px solid #e0e0e0;">Session ID</td>
-                    <td style="padding:10px;border:1px solid #e0e0e0;font-family:monospace;">%s</td>
-                  </tr>
-                  <tr style="background:#f0f4f8;">
-                    <td style="padding:10px;font-weight:bold;border:1px solid #e0e0e0;">Start Time</td>
-                    <td style="padding:10px;border:1px solid #e0e0e0;">%s</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:10px;font-weight:bold;border:1px solid #e0e0e0;">End Time</td>
-                    <td style="padding:10px;border:1px solid #e0e0e0;">%s</td>
-                  </tr>
-                  <tr style="background:#f0f4f8;">
-                    <td style="padding:10px;font-weight:bold;border:1px solid #e0e0e0;">Total Bookings</td>
-                    <td style="padding:10px;border:1px solid #e0e0e0;">%d</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:10px;font-weight:bold;border:1px solid #e0e0e0;">Total Revenue</td>
-                    <td style="padding:10px;border:1px solid #e0e0e0;color:#2e7d32;font-weight:bold;">
-                      LKR %.2f
-                    </td>
-                  </tr>
-                </table>
-
-                <hr style="border:none;border-top:1px solid #e0e0e0;margin-top:24px;">
-                <p style="font-size:12px;color:#aaa;text-align:center;">
-                  This is an automated admin alert from the Booking System.
-                </p>
-                %s
-              </div>
-            </div>
-        """.formatted(sessionName, sessionId,
-                startTime != null ? startTime.format(DISPLAY_FMT) : "—",
-                endTime   != null ? endTime.format(DISPLAY_FMT)   : "—",
-                totalBookings, totalRevenue);
     }
 }

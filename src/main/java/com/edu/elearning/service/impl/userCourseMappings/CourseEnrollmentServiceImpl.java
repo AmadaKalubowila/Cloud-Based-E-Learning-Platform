@@ -13,6 +13,7 @@ import com.edu.elearning.exception.ElearningException;
 import com.edu.elearning.repository.CourseEnrollmentRepository;
 import com.edu.elearning.repository.CourseRepository;
 import com.edu.elearning.repository.UserRepository;
+import com.edu.elearning.service.impl.email.EmailService;
 import com.edu.elearning.service.userCourseMappings.CourseEnrollmentService;
 import com.edu.elearning.specification.CommonSpecifications;
 import com.edu.elearning.utility.Sorting;
@@ -35,6 +36,8 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
     private final UserRepository userRepository;
 
     private final CourseRepository courseRepository;
+
+    private final EmailService emailService;
 
 
     @Override
@@ -76,6 +79,16 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
         CourseEnrollment saved =
                 enrollmentRepository.save(enrollment);
 
+        String htmlContent = emailService.buildEnrollmentEmail(
+                user.getUserDetails().getFullName(),
+                course.getCourseName(),
+                saved.getEnrolledDate()
+        );
+        emailService.sendHtmlEmail(
+                user.getUserDetails().getEmail(),
+                "You're Enrolled: " + course.getCourseName(),
+                htmlContent
+        );
 
         return convertToDTO(saved);
     }
@@ -144,7 +157,7 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
 
         enrollment.setStatus(Status.INACTIVE);
         enrollmentRepository.save(enrollment);
-        return  convertToDTO(enrollment);
+        return convertToDTO(enrollment);
     }
 
 

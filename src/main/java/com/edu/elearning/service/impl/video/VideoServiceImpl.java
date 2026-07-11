@@ -38,10 +38,7 @@ public class VideoServiceImpl implements VideoService {
     private final CourseEnrollmentRepository curEnrollmentRepository;
     private final UserDetailsRepository userDetailsRepository;
     private final CourseRepository courseRepository;
-    private final RestTemplate restTemplate;
 
-    @Value("${server.port:8088}")
-    private int serverPort;
 
     @Override
     public VideoResponse createVideo(VideoCreate videoCreate) {
@@ -91,18 +88,13 @@ public class VideoServiceImpl implements VideoService {
 
         Video savedVideo = videoRepository.save(video);
 
-        String url = "http://localhost:" + serverPort + "/videos/getAllByUsers/" + savedVideo.getId();
         List<CourseMappingsUser> enrolledUsers = List.of();
-        try {
-            ListOfMappedUsers users = restTemplate.getForObject(url, ListOfMappedUsers.class);
+
+            ListOfMappedUsers users = getCourseUsers(video.getId());
             if (users != null && users.getUsers() != null) {
                 enrolledUsers = users.getUsers();
+
             }
-            log.info("Fetched {} enrolled user(s) via API for video {}",
-                    enrolledUsers.size(), savedVideo.getId());
-        } catch (Exception e) {
-            log.warn("Failed to call getAllByUsers for video {}: {}", savedVideo.getId(), e.getMessage());
-        }
 
         VideoResponse response = convertToDTO(savedVideo);
         response.setEnrolledUsers(enrolledUsers);
