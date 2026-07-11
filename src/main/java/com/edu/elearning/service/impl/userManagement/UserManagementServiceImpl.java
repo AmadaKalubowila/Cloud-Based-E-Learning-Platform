@@ -60,12 +60,8 @@ public class UserManagementServiceImpl implements UserManagementService {
         auditUserLogRepository.save(buildAuditUserLog(user, "create User", "Create new user to system"));
 
 
-//
-//        emailService.sendHtmlEmail(
-//                user.getUserDetails().getEmail(),
-//                "You Have Registered to the platform",
-//                html
-//        );
+        String htmlContent = emailService.buildWelcomeEmail(user.getUserDetails().getFullName());
+        emailService.sendHtmlEmail(user.getUserDetails().getEmail(), "Welcome to the Platform 🎉", htmlContent);
         return buildUserResponse(user, userDetails);
     }
 
