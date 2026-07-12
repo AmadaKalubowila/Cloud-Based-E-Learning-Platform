@@ -1,0 +1,72 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-courses
+      author: edu-elearning
+      changes:
+        - createTable:
+            tableName: courses
+            columns:
+
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: course_code
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: course_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: description
+                  type: VARCHAR(1000)
+
+              - column:
+                  name: thumbnail_url
+                  type: VARCHAR(500)
+
+              - column:
+                  name: duration_hours
+                  type: INT
+
+              - column:
+                  name: course_status
+                  type: VARCHAR(50)
+
+              - column:
+                  name: departments
+                  type: VARCHAR(50)
+
+              - column:
+                  name: created_date_time
+                  type: TIMESTAMP
+
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+
+              - column:
+                  name: updated_by
+                  type: VARCHAR(255)
+
+              - column:
+                  name: updated_date_time
+                  type: TIMESTAMP
+
+              - column:
+                  name: version
+                  type: INT
+
+              - column:
+                  name: status
+                  type: VARCHAR(50)

@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-create-course-modules
+      author: edu-elearning
+      changes:
+        - createTable:
+            tableName: course_modules
+            columns:
+
+              - column:
+                  name: course_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: module_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - addPrimaryKey:
+            tableName: course_modules
+            columnNames: course_id, module_id
+            constraintName: pk_course_modules
+
+        - addForeignKeyConstraint:
+            baseTableName: course_modules
+            baseColumnNames: course_id
+            constraintName: fk_course_modules_course
+            referencedTableName: courses
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: course_modules
+            baseColumnNames: module_id
+            constraintName: fk_course_modules_module
+            referencedTableName: modules
+            referencedColumnNames: id

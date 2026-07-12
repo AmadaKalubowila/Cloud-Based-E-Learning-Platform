@@ -1,0 +1,60 @@
+databaseChangeLog:
+  # ==================================================
+  # MODULES
+  # ==================================================
+  - changeSet:
+      id: 005-create-modules
+      author: edu-elearning
+      changes:
+        - createTable:
+            tableName: modules
+            columns:
+
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: module_code
+                  type: VARCHAR(255)
+
+              - column:
+                  name: module_name
+                  type: VARCHAR(255)
+
+              - column:
+                  name: module_description
+                  type: VARCHAR(1000)
+
+              - column:
+                  name: module_credit
+                  type: VARCHAR(255)
+
+              - column:
+                  name: created_date_time
+                  type: TIMESTAMP
+
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+
+              - column:
+                  name: updated_by
+                  type: VARCHAR(255)
+
+              - column:
+                  name: updated_date_time
+                  type: TIMESTAMP
+
+              - column:
+                  name: version
+                  type: INT
+
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+
