@@ -40,7 +40,12 @@ public class SecurityConfig {
                                 "/videos/getById/**",
                                 "/courses/getAll",
                                 "/courses/getById/**",
-                                "/videos/getAllByUsers/**"
+                                "/videos/getAllByUsers/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**"
 
                         ).permitAll()
 

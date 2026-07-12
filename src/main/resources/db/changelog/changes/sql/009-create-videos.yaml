@@ -1,0 +1,73 @@
+databaseChangeLog:
+  # ==================================================
+  # VIDEOS
+  # ==================================================
+  - changeSet:
+      id: 009-create-videos
+      author: edu-elearning
+      changes:
+        - createTable:
+            tableName: videos
+            columns:
+
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+
+              - column:
+                  name: description
+                  type: VARCHAR(1000)
+
+              - column:
+                  name: video_url
+                  type: VARCHAR(500)
+
+              - column:
+                  name: duration_minutes
+                  type: INT
+
+              - column:
+                  name: display_order
+                  type: INT
+
+              - column:
+                  name: module_id
+                  type: BIGINT
+
+              - column:
+                  name: created_date_time
+                  type: TIMESTAMP
+
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+
+              - column:
+                  name: updated_by
+                  type: VARCHAR(255)
+
+              - column:
+                  name: updated_date_time
+                  type: TIMESTAMP
+
+              - column:
+                  name: version
+                  type: INT
+
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+
+        - addForeignKeyConstraint:
+            baseTableName: videos
+            baseColumnNames: module_id
+            constraintName: fk_videos_module
+            referencedTableName: modules
+            referencedColumnNames: id

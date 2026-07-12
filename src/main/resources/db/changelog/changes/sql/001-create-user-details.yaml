@@ -1,0 +1,80 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-user-details
+      author: edu-elearning
+      changes:
+        - createTable:
+            tableName: user_details
+            columns:
+
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: register_no
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: true
+                    uniqueConstraintName: uc_user_details_register_no
+
+              - column:
+                  name: full_name
+                  type: VARCHAR(255)
+
+              - column:
+                  name: role
+                  type: VARCHAR(50)
+
+              - column:
+                  name: department
+                  type: VARCHAR(50)
+
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+
+              - column:
+                  name: batch
+                  type: VARCHAR(255)
+
+              - column:
+                  name: address
+                  type: VARCHAR(255)
+
+              - column:
+                  name: phone
+                  type: VARCHAR(255)
+
+              - column:
+                  name: registered_date
+                  type: TIMESTAMP
+
+              - column:
+                  name: created_date_time
+                  type: TIMESTAMP
+
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+
+              - column:
+                  name: updated_by
+                  type: VARCHAR(255)
+
+              - column:
+                  name: updated_date_time
+                  type: TIMESTAMP
+
+              - column:
+                  name: version
+                  type: INT
+
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+
