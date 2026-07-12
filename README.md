@@ -73,9 +73,9 @@ deploy/
 
    Fill in `.env` with your **own** local values — do not reuse any values that may already exist in this repo's history. At minimum set:
 
-    - `DB_USERNAME` / `DB_PASSWORD` — your local MySQL credentials
-    - `JWT_SECRET` — any long random string (a dev default is provided if you skip this)
-    - `AWS_*` / `MAIL_*` — optional; leave blank to skip S3/email features locally
+   - `DB_USERNAME` / `DB_PASSWORD` — your local MySQL credentials
+   - `JWT_SECRET` — any long random string (a dev default is provided if you skip this)
+   - `AWS_*` / `MAIL_*` — optional; leave blank to skip S3/email features locally
 
 2. **Start MySQL** locally and make sure it's reachable at `DB_HOST:DB_PORT` (the app auto-creates the database on first run via `createDatabaseIfNotExist=true`).
 
@@ -145,11 +145,11 @@ Swagger UI is the fastest way to explore and test every endpoint without a separ
 
 1. **Start the app** (see [Getting Started](#getting-started-local-development) above).
 2. **Open Swagger UI:**
-    - Local: [http://localhost:8088/swagger-ui/index.html](http://localhost:8088/swagger-ui/index.html)
-    - Production: `http://<your-ec2-host>:8088/swagger-ui/index.html`
+   - Local: [http://localhost:8088/swagger-ui/index.html](http://localhost:8088/swagger-ui/index.html)
+   - Production: `http://<your-ec2-host>:8088/swagger-ui/index.html`
 3. **Authenticate first** for any protected endpoint:
-    - Expand `POST /user/login` under the **user-controller** section, click **Try it out**, submit valid credentials, and copy the `token` from the response.
-    - Click the **Authorize** button (top right, padlock icon), paste the token as `Bearer <your-token>`, and click **Authorize**. Swagger then attaches it automatically to every request you try from the UI.
+   - Expand `POST /user/login` under the **user-controller** section, click **Try it out**, submit valid credentials, and copy the `token` from the response.
+   - Click the **Authorize** button (top right, padlock icon), paste the token as `Bearer <your-token>`, and click **Authorize**. Swagger then attaches it automatically to every request you try from the UI.
 4. **Try any endpoint:** expand it, click **Try it out**, fill in the parameters/body, and click **Execute**. Swagger shows the live request, response status, response body, and a ready-to-copy cURL command.
 5. **Raw OpenAPI JSON** (for importing into Postman/Insomnia instead): [http://localhost:8088/v3/api-docs](http://localhost:8088/v3/api-docs)
 
@@ -170,11 +170,11 @@ The app ships with `springdoc-openapi`, so every controller is auto-documented a
    **Local:** [http://localhost:8088/v3/api-docs](http://localhost:8088/v3/api-docs)
 
 3. **Authenticate first, then authorize Swagger itself:**
-    - Expand `POST /user/login` under the *user* group → *Try it out* → enter a valid `username`/`password` → *Execute*.
-    - Copy the `token` value from the response body.
-    - Click the **Authorize** 🔒 button at the top right of the Swagger UI page.
-    - Paste the token (as `Bearer <token>` if the scheme requires the prefix — check the placeholder text in the dialog) → *Authorize* → *Close*.
-    - Every subsequent "Try it out" call on protected endpoints (courses, modules, enrollments, assignments, videos) will now automatically include your JWT in the `Authorization` header.
+   - Expand `POST /user/login` under the *user* group → *Try it out* → enter a valid `username`/`password` → *Execute*.
+   - Copy the `token` value from the response body.
+   - Click the **Authorize** 🔒 button at the top right of the Swagger UI page.
+   - Paste the token (as `Bearer <token>` if the scheme requires the prefix — check the placeholder text in the dialog) → *Authorize* → *Close*.
+   - Every subsequent "Try it out" call on protected endpoints (courses, modules, enrollments, assignments, videos) will now automatically include your JWT in the `Authorization` header.
 
 4. **Try an endpoint:** pick any operation (e.g. `GET /courses/getAll`), click *Try it out*, fill in parameters/body, and *Execute* — Swagger shows the live request, response body, status code, and headers.
 
