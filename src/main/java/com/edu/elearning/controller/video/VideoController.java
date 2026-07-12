@@ -20,7 +20,7 @@ public class VideoController {
     private final VideoService videoService;
 
     @PostMapping("/create")
-    public VideoResponse createVideo(@RequestHeader("Authorization") String token,
+    public VideoResponse createVideo(
             @RequestBody VideoCreate videoCreate) {
 
         return videoService.createVideo(videoCreate);
@@ -28,7 +28,7 @@ public class VideoController {
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public VideoResponse uploadVideo(
-            @RequestHeader("Authorization") String token,
+
             @RequestParam("file") MultipartFile file,
             @RequestParam("title") String title,
             @RequestParam(value = "description", required = false) String description,
@@ -42,14 +42,14 @@ public class VideoController {
 
     @PutMapping("/update")
     public VideoResponse updateVideo(
-            @RequestHeader("Authorization") String token,
+
             @RequestBody VideoUpdate videoUpdate) {
 
         return videoService.updateVideo(videoUpdate);
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteVideo(@RequestHeader("Authorization") String token,
+    public String deleteVideo(
             @PathVariable Long id) {
 
         videoService.deleteVideo(id);
@@ -58,7 +58,7 @@ public class VideoController {
     }
 
     @GetMapping("/getById/{id}")
-    public VideoResponse getVideoById(@RequestHeader("Authorization") String token,
+    public VideoResponse getVideoById(
             @PathVariable Long id) {
 
         return videoService.getVideoById(id);
@@ -72,7 +72,6 @@ public class VideoController {
 
     @GetMapping("/getAll")
     public Page<VideoResponse> getAllVideos(
-            @RequestHeader("Authorization") String token,
             @RequestParam Map<String,String> filters,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

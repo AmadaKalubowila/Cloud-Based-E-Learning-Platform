@@ -17,21 +17,21 @@ public class CourseAssignmentController {
     private final CourseAssignmentService assignmentService;
 
     @PostMapping("/assign")
-    public CourseAssignmentResponse assignLecturer(@RequestHeader("Authorization") String token,
+    public CourseAssignmentResponse assignLecturer(
             @RequestBody CourseAssignmentCreate request) {
 
         return assignmentService.assignLecturer(request);
     }
 
     @GetMapping("/getAssignmentById/{id}")
-    public CourseAssignmentResponse getAssignmentById(@RequestHeader("Authorization") String token,
+    public CourseAssignmentResponse getAssignmentById(
             @PathVariable Long id) {
 
         return assignmentService.getAssignmentById(id);
     }
 
     @GetMapping("/getAll")
-    public Page<CourseAssignmentResponse> getAllAssignments(@RequestHeader("Authorization") String token,
+    public Page<CourseAssignmentResponse> getAllAssignments(
             @RequestParam Map<String, String> filters,
 
             @RequestParam(defaultValue = "0")
@@ -58,7 +58,7 @@ public class CourseAssignmentController {
 
 
     @PostMapping("/remove/{id}")
-    public CourseAssignmentResponse removeAssignment(@RequestHeader("Authorization") String token,
+    public CourseAssignmentResponse removeAssignment(
             @PathVariable Long id) {
 
          return  assignmentService.removeAssignment(id);

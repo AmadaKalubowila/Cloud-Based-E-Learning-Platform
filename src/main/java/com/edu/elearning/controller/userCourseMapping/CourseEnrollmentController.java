@@ -20,7 +20,7 @@ public class CourseEnrollmentController {
 
 
     @PostMapping("/enrollStudent")
-    public EnrollmentResponse enrollStudent(@RequestHeader("Authorization") String token,
+    public EnrollmentResponse enrollStudent(
             @RequestBody EnrollmentCreate enrollmentCreate) {
 
         return enrollmentService.enrollStudent(
@@ -30,7 +30,7 @@ public class CourseEnrollmentController {
 
 
     @GetMapping("/getEnrollmentById/{id}")
-    public EnrollmentResponse getEnrollmentById(@RequestHeader("Authorization") String token,
+    public EnrollmentResponse getEnrollmentById(
             @PathVariable Long id) {
 
         return enrollmentService.getEnrollmentById(id);
@@ -39,7 +39,7 @@ public class CourseEnrollmentController {
 
     @GetMapping("/getAll")
     public Page<EnrollmentResponse> getAllEnrollments(
-            @RequestHeader("Authorization") String token,
+
             @RequestParam Map<String, String> filters,
 
             @RequestParam(defaultValue = "0")
@@ -66,7 +66,7 @@ public class CourseEnrollmentController {
 
 
     @PostMapping("/remove/{id}")
-    public EnrollmentResponse removeEnrollment(@RequestHeader("Authorization") String token,
+    public EnrollmentResponse removeEnrollment(
             @PathVariable Long id) {
 
         return  enrollmentService.removeEnrollment(id);

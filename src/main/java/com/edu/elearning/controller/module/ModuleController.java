@@ -20,7 +20,7 @@ public class ModuleController {
     private final ModuleService moduleService;
 
     @PostMapping("/create")
-    public ModuleResponse createModule(@RequestHeader("Authorization") String token,
+    public ModuleResponse createModule(
             @RequestBody ModuleCreate moduleCreate) {
 
         return moduleService.createModules(moduleCreate);
@@ -28,7 +28,7 @@ public class ModuleController {
 
 
     @PutMapping("/update")
-    public ModuleResponse updateModule(@RequestHeader("Authorization") String token,
+    public ModuleResponse updateModule(
             @RequestBody ModuleUpdate moduleUpdate) {
 
         return moduleService.updateModule(moduleUpdate);
@@ -36,7 +36,7 @@ public class ModuleController {
 
 
     @GetMapping("/getById/{id}")
-    public ModuleResponse getModuleById(@RequestHeader("Authorization") String token,
+    public ModuleResponse getModuleById(
             @PathVariable Long id) {
 
         return moduleService.getModuleById(id);
@@ -44,7 +44,7 @@ public class ModuleController {
 
 
     @GetMapping("/getAll")
-    public Page<ModuleResponse> getAllModules(@RequestHeader("Authorization") String token,
+    public Page<ModuleResponse> getAllModules(
             @RequestParam Map<String, String> filters,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
