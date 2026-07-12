@@ -31,7 +31,7 @@ A Spring Boot REST API backend for a cloud-native e-learning platform, built as 
 
 ```
 src/main/java/com/edu/elearning/
-├── config/            # Security, S3, Liquibase, mail, REST client config
+├── config/            # Security, S3, Liquibase, mail, REST client, OpenAPI/Swagger bearer-auth config
 ├── controller/         # REST controllers (course, module, user, video, enrollment, assignment)
 ├── dto/                # Request/response DTOs, grouped by feature
 ├── entity/             # JPA entities
@@ -73,9 +73,9 @@ deploy/
 
    Fill in `.env` with your **own** local values — do not reuse any values that may already exist in this repo's history. At minimum set:
 
-   - `DB_USERNAME` / `DB_PASSWORD` — your local MySQL credentials
-   - `JWT_SECRET` — any long random string (a dev default is provided if you skip this)
-   - `AWS_*` / `MAIL_*` — optional; leave blank to skip S3/email features locally
+    - `DB_USERNAME` / `DB_PASSWORD` — your local MySQL credentials
+    - `JWT_SECRET` — any long random string (a dev default is provided if you skip this)
+    - `AWS_*` / `MAIL_*` — optional; leave blank to skip S3/email features locally
 
 2. **Start MySQL** locally and make sure it's reachable at `DB_HOST:DB_PORT` (the app auto-creates the database on first run via `createDatabaseIfNotExist=true`).
 
@@ -96,7 +96,7 @@ deploy/
 
 5. **API docs (Swagger UI)** — once running, visit:
 
-   [http://localhost:8088/swagger-ui/index.html](http://localhost:8088/swagger-ui/index.html)
+   [http://localhost:8088/swagger-ui/index.html](http://localhost:8088/swagger-ui/index.html) or [http://3.95.246.200/swagger-ui/index.html](http://3.95.246.200/swagger-ui/index.html)
 
    (`/swagger-ui.html` redirects there too.) The raw OpenAPI spec is at [http://localhost:8088/v3/api-docs](http://localhost:8088/v3/api-docs). Both paths are already allow-listed in `SecurityConfig`, so no token is needed just to view the docs.
 
@@ -141,44 +141,80 @@ Full request/response schemas are available via Swagger UI (see [Testing the API
 
 ## Testing the API with Swagger
 
-Swagger UI is the fastest way to explore and test every endpoint without a separate tool like Postman.
+Swagger UI is the fastest way to explore and test every endpoint without a separate tool. As of the `OpenApiConfig` bearer-auth setup, the whole API is wired to a single **Authorize** button — you don't need to enter a token separately on every endpoint.
 
-1. **Start the app** (see [Getting Started](#getting-started-local-development) above).
-2. **Open Swagger UI:**
-   - Local: [http://localhost:8088/swagger-ui/index.html](http://localhost:8088/swagger-ui/index.html)
-   - Production: `http://<your-ec2-host>:8088/swagger-ui/index.html`
-3. **Authenticate first** for any protected endpoint:
-   - Expand `POST /user/login` under the **user-controller** section, click **Try it out**, submit valid credentials, and copy the `token` from the response.
-   - Click the **Authorize** button (top right, padlock icon), paste the token as `Bearer <your-token>`, and click **Authorize**. Swagger then attaches it automatically to every request you try from the UI.
-4. **Try any endpoint:** expand it, click **Try it out**, fill in the parameters/body, and click **Execute**. Swagger shows the live request, response status, response body, and a ready-to-copy cURL command.
-5. **Raw OpenAPI JSON** (for importing into Postman/Insomnia instead): [http://localhost:8088/v3/api-docs](http://localhost:8088/v3/api-docs)
+**1. Start the app** (see [Getting Started](#getting-started-local-development) above).
+
+**2. Open Swagger UI:**
+- Local: [http://localhost:8088/swagger-ui/index.html](http://localhost:8088/swagger-ui/index.html)
+- Production: [http://3.95.246.200/swagger-ui/index.html](http://3.95.246.200/swagger-ui/index.html)
+
+**3. Get a token:**
+- Expand `POST /user/login` (under **user-controller**) → **Try it out** → enter your `userName`/`password` → **Execute**.
+- Copy the `accessToken` value from the response body (not `refreshToken`).
+
+**4. Authorize Swagger (do this once per session):**
+- Click the green **Authorize** 🔒 button near the top of the page.
+- In the dialog, paste your token in the form `Bearer <accessToken>` — the word `Bearer`, one space, then the token. No quotes, no extra words.
+- Click **Authorize**, then **Close**.
+- Swagger now attaches this header automatically to every request you try — you never touch it again unless the token expires (it's short-lived by design, ~20 minutes; if requests suddenly start failing with 401/403 after a while, just log in again and re-Authorize).
+
+**5. Try any endpoint:** expand it, click **Try it out**, fill in real values (not the placeholder `"string"` text), click **Execute**. Swagger shows the live request, response status, response body, and a matching cURL command.
+
+**6. Raw OpenAPI JSON** (for importing into Postman/Insomnia): [http://localhost:8088/v3/api-docs](http://localhost:8088/v3/api-docs) locally, or [http://3.95.246.200/v3/api-docs](http://3.95.246.200/v3/api-docs) in production.
 
 > Tip for the project report: Swagger's request/response panel makes clean, consistent screenshots — a good fit for the "API testing (Postman/screenshots)" evidence required in Part 5 of the assignment brief.
 
-## Testing the API with Swagger
+### How Authorization actually works here (short version)
 
-The app ships with `springdoc-openapi`, so every controller is auto-documented and testable straight from the browser — no Postman setup required.
+- Every protected endpoint expects an HTTP header: `Authorization: Bearer <token>`.
+- You get the token from `POST /user/login` — it proves who you are and what role you have (`STUDENT`, `LECTURER`, `ADMIN`).
+- `JwtFilter` reads that header on every request, checks the token is valid and not expired, and tells Spring Security which role you have. Spring Security then allows or blocks the request based on the rules in `SecurityConfig` (e.g. only `ADMIN` can hit `/modules/create`).
+- No header → treated as an anonymous/unauthenticated request → `403` on anything that isn't public.
+- Expired or malformed token → same result, `403`.
+- The token is *not* saved anywhere server-side — it's just a signed piece of data your client re-sends on every request. Losing it means logging in again; there's nothing to "log out" server-side beyond discarding it (see `POST /user/logout`/`POST /user/refresh` for token lifecycle handling).
 
-1. Start the app locally (see [Getting Started](#getting-started-local-development) above).
-2. Open Swagger UI in your browser:
+## Testing the API with Postman
 
-   **Local:** [http://localhost:8088/swagger-ui.html](http://localhost:8088/swagger-ui.html)
-   **Production:** `http://<host>:8088/swagger-ui.html`
+Postman works identically to Swagger, just outside the browser — useful for saving a reusable collection, chaining requests, or grabbing evidence screenshots for the report.
 
-   Raw OpenAPI JSON (useful for importing into Postman/Insomnia) is available at:
+**1. Log in and grab a token:**
+- New request → `POST http://3.95.246.200/user/login` (or `http://localhost:8088/user/login` locally)
+- Body tab → **raw** → **JSON**:
+  ```json
+  {
+    "userName": "admin01",
+    "password": "Admin@123"
+  }
+  ```
+- Send. Copy `accessToken` from the response.
 
-   **Local:** [http://localhost:8088/v3/api-docs](http://localhost:8088/v3/api-docs)
+**2. Set up the Authorization header once, reusably (recommended — avoids retyping it on every request):**
+- Create a Postman **Environment** (top-right dropdown → *Add*), name it e.g. `elearning-local` or `elearning-prod`.
+- Add a variable `token` and paste the `accessToken` value into *Current Value*.
+- On each request, go to the **Authorization** tab → Type: **Bearer Token** → in the Token field enter `{{token}}`.
+- Now every request in that environment reuses the same variable — update `token` in one place after each login instead of editing every request.
 
-3. **Authenticate first, then authorize Swagger itself:**
-   - Expand `POST /user/login` under the *user* group → *Try it out* → enter a valid `username`/`password` → *Execute*.
-   - Copy the `token` value from the response body.
-   - Click the **Authorize** 🔒 button at the top right of the Swagger UI page.
-   - Paste the token (as `Bearer <token>` if the scheme requires the prefix — check the placeholder text in the dialog) → *Authorize* → *Close*.
-   - Every subsequent "Try it out" call on protected endpoints (courses, modules, enrollments, assignments, videos) will now automatically include your JWT in the `Authorization` header.
+**3. Call a protected endpoint, e.g. create a module:**
+- `POST http://3.95.246.200/modules/create`
+- Authorization tab → Bearer Token → `{{token}}` (as set up above)
+- Body → raw → JSON:
+  ```json
+  {
+    "moduleCode": "COD1",
+    "moduleName": "CS",
+    "moduleDescription": "CS intro",
+    "moduleCredit": "02"
+  }
+  ```
+- Send. Expect `200 OK` with the created module back, if your logged-in user has the `ADMIN` role required for this endpoint.
 
-4. **Try an endpoint:** pick any operation (e.g. `GET /courses/getAll`), click *Try it out*, fill in parameters/body, and *Execute* — Swagger shows the live request, response body, status code, and headers.
+**4. Common Postman gotchas:**
+- `403 Forbidden` with an empty body → token missing, expired, or the logged-in user's role doesn't match what the endpoint requires (check `SecurityConfig` for the role rules per path).
+- `400 Bad Request` → the request reached the server fine, but the JSON body is malformed or missing required fields — check the body tab is set to **raw / JSON**, not **form-data** or **x-www-form-urlencoded**.
+- Import `http://3.95.246.200/v3/api-docs` directly into Postman (*Import* → *Link*) to auto-generate a full request collection instead of building each request by hand.
 
-> If `/swagger-ui.html` 404s, confirm `springdoc-openapi-starter-webmvc-ui` is on the classpath (it's already in `pom.xml`) and that no custom Spring Security rule is blocking `/swagger-ui/**` and `/v3/api-docs/**` — those paths must stay publicly accessible for the docs UI to load.
+
 
 ## Deployment (AWS EC2)
 
